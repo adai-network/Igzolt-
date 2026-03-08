@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EdgeLayer Systems | IGZOLT Interface</title>
+  <meta name="description" content="EdgeLayer Systems — living interface for digital infrastructure, AI orchestration, and ownership-first architecture." />
+  <style>
+    :root{
+      --bg:#07131d;
+      --bg2:#0b1e2c;
+      --ink:#e6dcc6;
+      --muted:#9fb1bc;
+      --line:rgba(230,220,198,.18);
+      --line-strong:rgba(230,220,198,.34);
+      --panel:rgba(7,19,29,.72);
+      --panel-2:rgba(11,30,44,.58);
+      --accent:#d9483b;
+      --accent-soft:rgba(217,72,59,.25);
+      --glow:rgba(230,220,198,.12);
+      --gold:#e0c88f;
+      --grid:64px;
+      --max:1400px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);overflow-x:hidden}
+    body{
+      background:
+        radial-gradient(1000px 700px at 50% 20%, rgba(224,200,143,.08), transparent 60%),
+        radial-gradient(700px 400px at 80% 75%, rgba(217,72,59,.08), transparent 55%),
+        linear-gradient(180deg, #050d14 0%, #091925 40%, #07131d 100%);
+    }
+
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: var(--grid) var(--grid), var(--grid) var(--grid);
+      mask-image: radial-gradient(circle at center, rgba(0,0,0,.95), rgba(0,0,0,.66) 70%, transparent 100%);
+      pointer-events:none;
+      opacity:.55;
+    }
+
+    body::after{
+      content:"";
+      position:fixed; inset:0;
+      background:
+        repeating-linear-gradient(90deg, transparent 0 129px, rgba(255,255,255,.025) 130px 131px),
+        repeating-linear-gradient(transparent 0 129px, rgba(255,255,255,.02) 130px 131px);
+      pointer-events:none;
+      opacity:.12;
+      mix-blend-mode:screen;
+    }
+
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+
+    .shell{position:relative;max-width:var(--max);margin:0 auto;padding:18px 18px 56px}
+
+    .nav{
+      position:sticky;top:0;z-index:20;
+      display:flex;align-items:center;justify-content:space-between;gap:18px;
+      padding:16px 0 18px;
+      backdrop-filter:blur(12px);
+    }
+
+    .nav:after{
+      content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg, transparent, var(--line-strong), transparent);
+    }
+
+    .brand{display:flex;align-items:center;gap:14px;min-width:280px}
+    .brand-mark{
+      width:48px;height:48px;border:1px solid var(--line-strong);border-radius:50%;
+      display:grid;place-items:center;background:radial-gradient(circle at 50% 40%, rgba(224,200,143,.12), rgba(7,19,29,.8));
+      box-shadow:0 0 0 1px rgba(255,255,255,.04) inset, 0 0 40px rgba(224,200,143,.06);
+      position:relative;overflow:hidden;
+    }
+    .brand-mark::before{content:"◐";font-size:25px;line-height:1;color:var(--ink);transform:translateY(-1px)}
+    .brand-copy b{display:block;font-size:14px;letter-spacing:.32em;text-transform:uppercase}
+    .brand-copy span{display:block;font-size:11px;letter-spacing:.28em;color:var(--muted);text-transform:uppercase;margin-top:4px}
+
+    .nav-links{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .nav-links a{
+      padding:10px 14px;border:1px solid var(--line);border-radius:999px;
+      background:rgba(255,255,255,.02);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+      transition:.2s ease;
+    }
+    .nav-links a:hover{color:var(--ink);border-color:var(--line-strong);transform:translateY(-1px)}
+
+    .hero{
+      position:relative;
+      min-height:calc(100vh - 110px);
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:30px;
+      align-items:center;
+      padding:40px 0 20px;
+    }
+
+    .hero-copy{position:relative;z-index:2;padding-right:10px}
+    .eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+    h1{
+      margin:0;
+      font-size:clamp(48px, 9vw, 108px);
+      line-height:.92;
+      letter-spacing:.02em;
+      font-weight:700;
+      text-transform:uppercase;
+      max-width:860px;
+      text-shadow:0 0 32px rgba(230,220,198,.08);
+    }
+    h1 .accent{color:var(--accent);display:block}
+
+    .lede{
+      max-width:720px;
+      margin:24px 0 0;
+      color:var(--muted);
+      font-size:16px;line-height:1.8;
+      border-left:1px solid var(--line-strong);
+      padding-left:18px;
+    }
+
+    .signal-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+    .signal-row span{
+      font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
+      border:1px solid var(--line);border-radius:999px;padding:9px 12px;background:rgba(255,255,255,.025)
+    }
+
+    .cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+    .btn{
+      min-width:172px;padding:14px 18px;border-radius:16px;border:1px solid var(--line-strong);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      color:var(--ink);text-transform:uppercase;letter-spacing:.18em;font-size:12px;font-weight:700;cursor:pointer;
+      box-shadow:0 18px 50px rgba(0,0,0,.28);
+    }
+    .btn.primary{background:linear-gradient(135deg, rgba(217,72,59,.22), rgba(224,200,143,.08));border-color:rgba(217,72,59,.45)}
+
+    .hero-structure{position:relative;min-height:720px;display:grid;place-items:center}
+
+    .diagram{
+      position:relative;width:min(100%,650px);aspect-ratio:1/1.08;
+      filter:drop-shadow(0 40px 80px rgba(0,0,0,.45));
+    }
+
+    .diagram svg{width:100%;height:100%;display:block}
+
+    .data-tags{position:absolute;inset:0;pointer-events:none}
+    .tag{
+      position:absolute;padding:8px 10px;border:1px solid var(--line);background:var(--panel);
+      font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);backdrop-filter:blur(10px)
+    }
+    .tag strong{display:block;color:var(--ink);font-size:11px;letter-spacing:.16em;margin-bottom:3px}
+
+    .tag.t1{top:10%;left:4%}
+    .tag.t2{top:20%;right:3%}
+    .tag.t3{bottom:22%;left:2%}
+    .tag.t4{bottom:12%;right:5%}
+
+    .section{
+      position:relative;
+      margin-top:36px;
+      border-top:1px solid rgba(255,255,255,.06);
+      padding-top:32px;
+    }
+
+    .section-head{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:20px}
+    .section-head h2{margin:0;font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--muted);font-weight:600}
+    .section-head p{margin:0;max-width:720px;color:var(--muted);font-size:14px}
+
+    .modules{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+    .module{
+      grid-column:span 4;min-height:220px;padding:18px;position:relative;overflow:hidden;
+      border:1px solid var(--line);background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));border-radius:22px;
+    }
+    .module::before{
+      content:"";position:absolute;inset:0;background:
+      radial-gradient(280px 160px at 80% 20%, rgba(224,200,143,.10), transparent 55%),
+      radial-gradient(220px 180px at 10% 90%, rgba(217,72,59,.10), transparent 50%);
+      pointer-events:none;
+    }
+    .module > *{position:relative}
+    .module small{display:block;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+    .module h3{margin:0 0 10px;font-size:24px;line-height:1.06;text-transform:uppercase}
+    .module p{margin:0;color:var(--muted);font-size:14px;line-height:1.7;max-width:90%}
+    .module .metric{position:absolute;right:16px;bottom:16px;font-size:12px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+
+    .module.wide{grid-column:span 8;min-height:260px}
+    .module.tall{grid-column:span 4;grid-row:span 2}
+
+    .constellation{
+      position:absolute;inset:0;opacity:.22;pointer-events:none;
+      background-image:
+        radial-gradient(circle at 18% 24%, currentColor 0 1px, transparent 2px),
+        radial-gradient(circle at 74% 31%, currentColor 0 1px, transparent 2px),
+        radial-gradient(circle at 58% 78%, currentColor 0 1px, transparent 2px),
+        linear-gradient(140deg, transparent 49.7%, rgba(230,220,198,.18) 50%, transparent 50.3%),
+        linear-gradient(18deg, transparent 49.7%, rgba(230,220,198,.16) 50%, transparent 50.3%);
+      color:var(--ink);
+    }
+
+    .dock{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px;
+    }
+    .dock-card{
+      border:1px solid var(--line);border-radius:16px;padding:14px;background:rgba(255,255,255,.02);
+      min-height:118px;
+    }
+    .dock-card b{display:block;font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px}
+    .dock-card span{display:block;color:var(--muted);font-size:13px;line-height:1.7}
+
+    .footer{
+      margin-top:42px;padding-top:18px;border-top:1px solid var(--line);
+      display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12px;
+      letter-spacing:.18em;text-transform:uppercase;
+    }
+
+    @media (max-width: 1100px){
+      .hero{grid-template-columns:1fr;min-height:auto}
+      .hero-structure{order:-1;min-height:520px}
+      .module,.module.wide,.module.tall{grid-column:span 6;grid-row:auto}
+      .dock{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width: 740px){
+      .shell{padding-inline:14px}
+      .brand{min-width:unset}
+      .nav{position:relative}
+      .nav-links{justify-content:flex-start}
+      .module,.module.wide,.module.tall{grid-column:span 12}
+      .dock{grid-template-columns:1fr}
+      .hero-structure{min-height:420px}
+      h1{font-size:clamp(38px, 12vw, 70px)}
+      .tag{display:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="nav">
+      <a class="brand" href="#">
+        <span class="brand-mark"></span>
+        <span class="brand-copy">
+          <b>EdgeLayer Systems</b>
+          <span>ADAI Network · IGZOLT Node</span>
+        </span>
+      </a>
+      <nav class="nav-links">
+        <a href="#interface">Interface</a>
+        <a href="#systems">Systems</a>
+        <a href="#authority">Authority</a>
+        <a href="#intake">Intake</a>
+      </nav>
+    </header>
+
+    <section class="hero" id="interface">
+      <div class="hero-copy">
+        <div class="eyebrow">Digital Infrastructure · AI Orchestration · Located Off Grid</div>
+        <h1>
+          The <span class="accent">Interface</span>
+          Is The System.
+        </h1>
+        <p class="lede">
+          EdgeLayer Systems evolves from a page into a living architectural interface: an ownership-first node for AI interaction, network routing, intake, authority, and long-horizon digital control. The structure is the navigation. The geometry is the system map. Every layer reveals information, action, and intelligence without breaking the visual field.
+        </p>
+        <div class="signal-row">
+          <span>Private Infrastructure</span>
+          <span>AI-Native Navigation</span>
+          <span>Spatial Interface Ready</span>
+          <span>Upgradeable Node</span>
+        </div>
+        <div class="cta-row">
+          <button class="btn primary">Enter Node</button>
+          <button class="btn">Open Intake</button>
+          <button class="btn">Read Authority</button>
+        </div>
+      </div>
+
+      <div class="hero-structure">
+        <div class="diagram" aria-label="Architectural node diagram">
+          <svg viewBox="0 0 800 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="tower" x1="400" y1="100" x2="400" y2="760" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#f0e6cf" stop-opacity="0.95"/>
+                <stop offset="1" stop-color="#b8ae9a" stop-opacity="0.25"/>
+              </linearGradient>
+              <linearGradient id="towerSoft" x1="180" y1="240" x2="650" y2="640" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#f1e7cf" stop-opacity="0.10"/>
+                <stop offset="1" stop-color="#f1e7cf" stop-opacity="0.02"/>
+              </linearGradient>
+            </defs>
+
+            <g opacity="0.45" stroke="url(#tower)" stroke-width="1.2">
+              <line x1="400" y1="38" x2="400" y2="822"/>
+              <line x1="84" y1="430" x2="714" y2="430"/>
+              <circle cx="400" cy="430" r="276"/>
+              <circle cx="400" cy="430" r="208" opacity="0.5"/>
+              <circle cx="206" cy="310" r="18"/>
+              <circle cx="592" cy="310" r="18"/>
+              <circle cx="624" cy="430" r="12"/>
+              <circle cx="176" cy="430" r="12"/>
+              <path d="M164 430H84"/>
+              <path d="M636 430H716"/>
+            </g>
+
+            <g opacity="0.95" stroke="url(#tower)" fill="none" stroke-width="3">
+              <path d="M360 756V702H438V756"/>
+              <path d="M308 758V654H490V758"/>
+              <path d="M286 656V610H512V656"/>
+              <path d="M300 610V570H498V610"/>
+              <path d="M338 570V516H460V570"/>
+              <path d="M328 516V474H470V516"/>
+              <path d="M250 474L295 438H505L550 474"/>
+              <path d="M274 438V392H526V438"/>
+              <path d="M296 392V342H504V392"/>
+              <path d="M320 342V274H480V342"/>
+              <path d="M344 274V222H456V274"/>
+              <path d="M360 222V172H440V222"/>
+              <path d="M374 172V126H426V172"/>
+              <path d="M400 90V126"/>
+              <path d="M386 90C386 76 392 66 400 58C408 66 414 76 414 90"/>
+            </g>
+
+            <g opacity="0.35" fill="url(#towerSoft)" stroke="none">
+              <path d="M296 392H504V758H296Z"/>
+            </g>
+
+            <g stroke="url(#tower)" stroke-width="4" fill="none">
+              <circle cx="400" cy="386" r="88"/>
+              <path d="M432 306C384 314 356 344 352 386C356 430 384 458 432 466"/>
+              <path d="M486 386C466 364 436 350 400 350C364 350 334 364 314 386C334 408 364 422 400 422C436 422 466 408 486 386Z"/>
+              <circle cx="400" cy="386" r="18"/>
+            </g>
+
+            <g opacity="0.72" stroke="url(#tower)" stroke-width="2">
+              <path d="M178 430L226 402L264 430L226 458L178 430Z"/>
+              <path d="M622 430L668 394L714 430L668 466L622 430Z"/>
+              <circle cx="120" cy="430" r="18"/>
+              <circle cx="80" cy="430" r="18"/>
+              <circle cx="720" cy="430" r="18"/>
+              <line x1="720" y1="430" x2="760" y2="430"/>
+              <path d="M760 430L746 420M760 430L746 440"/>
+            </g>
+
+            <g opacity="0.55" stroke="url(#tower)" stroke-width="1.4">
+              <line x1="278" y1="252" x2="228" y2="208"/>
+              <line x1="522" y1="252" x2="572" y2="208"/>
+              <line x1="280" y1="576" x2="222" y2="620"/>
+              <line x1="520" y1="576" x2="578" y2="620"/>
+            </g>
+          </svg>
+
+          <div class="data-tags">
+            <div class="tag t1"><strong>ADAI</strong> Governance Layer</div>
+            <div class="tag t2"><strong>IGZOLT</strong> Interaction Core</div>
+            <div class="tag t3"><strong>INTAKE</strong> Voice / Form / Routing</div>
+            <div class="tag t4"><strong>EDGE</strong> Site / DNS / Authority</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="systems">
+      <div class="section-head">
+        <h2>System Layers</h2>
+        <p>The website becomes a node-based architecture. Each structural zone maps to a real operational function, so the visual language and the infrastructure language are the same thing.</p>
+      </div>
+
+      <div class="modules">
+        <article class="module wide">
+          <div class="constellation"></div>
+          <small>01 · Living Interface</small>
+          <h3>Hero becomes the terminal threshold.</h3>
+          <p>Instead of a standard homepage, the user lands inside a single monumental interface object. Hover states, section transitions, and panel reveals make the structure feel alive while preserving static-site performance. The architecture is the menu system.</p>
+          <div class="metric">Node Entry Surface</div>
+        </article>
+
+        <article class="module tall">
+          <small>02 · Authority</small>
+          <h3>Ownership-first information architecture.</h3>
+          <p>Infrastructure, resources, proof assets, authority statements, and intake pathways are nested behind intentional layers. Nothing feels like a brochure. Everything feels like entering a system.</p>
+          <div class="metric">Legal + Digital Spine</div>
+        </article>
+
+        <article class="module">
+          <small>03 · Voice</small>
+          <h3>IGZOLT-ready contact routing.</h3>
+          <p>Call intake, assistant handoff, and AI-triggered project pipelines plug into the interface later without breaking the experience.</p>
+          <div class="metric">Voice Gateway</div>
+        </article>
+
+        <article class="module">
+          <small>04 · Discovery</small>
+          <h3>AI-readable semantic layers.</h3>
+          <p>Structured content remains machine-readable beneath the visual shell so search, indexing, and future AI systems can still navigate the node correctly.</p>
+          <div class="metric">Structured Core</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="authority">
+      <div class="section-head">
+        <h2>Docked Functions</h2>
+        <p>This first-pass concept keeps your current business content, but translates it into a system language that can later hold voice, memory, intake, dashboards, and VR interaction.</p>
+      </div>
+
+      <div class="dock">
+        <div class="dock-card"><b>Services</b><span>Infrastructure builds, authority expansion, AI-integrated deployment, and ownership-first architecture.</span></div>
+        <div class="dock-card"><b>Resources</b><span>Frameworks, briefs, deployment proof, governance references, and educational artifacts.</span></div>
+        <div class="dock-card"><b>Intake</b><span>Project start layer for forms, call entry, qualification logic, and future agent activation.</span></div>
+        <div class="dock-card"><b>Contact</b><span>Human communication path with future AI assistant escalation and meeting routing support.</span></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>EdgeLayer Systems</span>
+      <span>ADAI Network</span>
+      <span>IGZOLT System Node</span>
+      <span>Located Off Grid</span>
+    </footer>
+  </div>
+</body>
+</html>
