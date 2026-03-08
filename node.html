@@ -9,30 +9,34 @@
     :root{
       --bg:#06111a;
       --bg2:#0a2033;
-      --bg3:#10365b;
       --ink:#efe5cf;
       --muted:#aab7c5;
       --line:rgba(239,229,207,.16);
       --line-strong:rgba(239,229,207,.40);
-      --line-soft:rgba(239,229,207,.08);
       --gold:#e0c88f;
       --accent:#d9483b;
-      --glow:rgba(239,229,207,.18);
-      --blueglow:rgba(88,150,255,.22);
-      --panel:rgba(6,17,26,.72);
-      --panel2:rgba(10,32,51,.84);
+      --panel:rgba(6,17,26,.86);
+      --panel2:rgba(10,32,51,.92);
       --grid:64px;
       --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       --ease:cubic-bezier(.22,.8,.22,1);
     }
 
     *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--font)}
+    html,body{
+      margin:0;
+      min-height:100%;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:var(--font);
+      overflow-x:hidden;
+      overflow-y:auto;
+    }
+
     body{
       background:
         radial-gradient(1100px 820px at 50% 42%, rgba(92,148,255,.12), transparent 42%),
         radial-gradient(900px 700px at 50% 55%, rgba(224,200,143,.06), transparent 44%),
-        radial-gradient(600px 300px at 50% 75%, rgba(217,72,59,.045), transparent 40%),
         linear-gradient(180deg, #03101a 0%, #08203a 45%, #07131d 100%);
     }
 
@@ -129,14 +133,17 @@
       width:min(100%, 1680px);
       min-height:100vh;
       margin:0 auto;
-      padding:18px;
-      isolation:isolate;
+      padding:18px 18px 32px;
     }
 
     .topbar{
-      position:relative; z-index:20;
-      display:flex; justify-content:space-between; align-items:flex-start;
-      gap:24px; padding-top:8px;
+      position:relative;
+      z-index:20;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:24px;
+      padding-top:8px;
     }
 
     .identity{display:flex;gap:14px;align-items:flex-start}
@@ -181,6 +188,7 @@
       min-height:calc(100vh - 80px);
       display:grid;
       place-items:center;
+      padding:28px 0 260px;
     }
 
     .atmosphere{
@@ -268,7 +276,8 @@
     .phase-orbit{animation:microPulse 7s ease-in-out infinite}
 
     .labels{
-      position:absolute; inset:0;
+      position:absolute;
+      inset:0;
       pointer-events:none;
     }
 
@@ -288,6 +297,7 @@
       transition:transform .24s var(--ease), border-color .24s ease, background .24s ease;
       pointer-events:auto;
       cursor:pointer;
+      z-index:6;
     }
     .chip:hover{
       transform:translateY(-2px) scale(1.02);
@@ -301,24 +311,25 @@
     .chip.ai{bottom:23%;right:14%}
 
     .panel{
-      position:absolute;
-      right:24px; bottom:24px;
-      width:min(430px, 35vw);
+      position:fixed;
+      left:50%;
+      bottom:20px;
+      transform:translateX(-50%) translateY(18px);
+      width:min(880px, calc(100vw - 28px));
       border:1px solid var(--line);
       border-radius:24px;
-      background:linear-gradient(180deg, rgba(6,17,26,.84), rgba(8,24,38,.76));
+      background:linear-gradient(180deg, rgba(6,17,26,.92), rgba(8,24,38,.90));
       backdrop-filter:blur(18px);
       padding:18px 18px 16px;
       box-shadow:0 28px 72px rgba(0,0,0,.35);
-      z-index:10;
+      z-index:30;
       opacity:0;
-      transform:translateY(18px);
       transition:opacity .35s ease, transform .35s var(--ease);
       pointer-events:none;
     }
     .panel.active{
       opacity:1;
-      transform:translateY(0);
+      transform:translateX(-50%) translateY(0);
       pointer-events:auto;
     }
     .panel small{
@@ -366,10 +377,26 @@
       background:linear-gradient(135deg, rgba(217,72,59,.18), rgba(224,200,143,.08));
     }
 
-    .sound{
+    .panel-close{
       position:absolute;
-      left:24px; bottom:24px;
-      display:flex; gap:10px; align-items:center;
+      top:12px;
+      right:12px;
+      width:38px;
+      height:38px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--ink);
+      cursor:pointer;
+    }
+
+    .sound{
+      position:fixed;
+      left:18px;
+      bottom:18px;
+      display:flex;
+      gap:10px;
+      align-items:center;
       border:1px solid var(--line);
       border-radius:999px;
       padding:10px 14px;
@@ -379,7 +406,7 @@
       letter-spacing:.18em;
       text-transform:uppercase;
       backdrop-filter:blur(14px);
-      z-index:10;
+      z-index:31;
     }
     .sound-dot{
       width:10px;height:10px;border-radius:50%;
@@ -389,15 +416,15 @@
     }
 
     .hint{
-      position:absolute;
-      left:50%; bottom:8px;
-      transform:translateX(-50%);
+      position:fixed;
+      right:18px;
+      bottom:18px;
       color:var(--muted);
       font-size:10px;
       letter-spacing:.28em;
       text-transform:uppercase;
       opacity:.72;
-      white-space:nowrap;
+      z-index:31;
     }
 
     @keyframes bootPulse{
@@ -461,7 +488,7 @@
       .shell{padding:14px}
       .topbar{flex-direction:column;align-items:flex-start}
       .status{text-align:left;padding-top:0}
-      .realm{min-height:calc(100vh - 70px)}
+      .realm{min-height:calc(100vh - 70px);padding-bottom:300px}
       .orbital{width:390px;height:390px}
       .chip{
         min-width:unset;
@@ -473,10 +500,11 @@
       .chip.intake{bottom:16%;left:5%}
       .chip.ai{bottom:18%;right:5%}
       .panel{
-        left:14px; right:14px; bottom:78px; width:auto;
+        width:calc(100vw - 20px);
+        bottom:10px;
       }
-      .sound{left:14px;bottom:18px}
-      .hint{bottom:4px}
+      .sound{left:10px;bottom:10px}
+      .hint{display:none}
     }
 
     @media (max-width:560px){
@@ -485,6 +513,9 @@
       .chip{font-size:10px;letter-spacing:.05em}
       .identity-copy b{font-size:13px}
       .identity-copy span{letter-spacing:.18em}
+      .sound{font-size:9px;padding:8px 10px}
+      .panel h2{font-size:20px}
+      .panel p{font-size:13px}
     }
   </style>
 </head>
@@ -539,7 +570,6 @@
               </linearGradient>
             </defs>
 
-            <!-- guide system -->
             <g class="phase-lines" opacity="0.48" stroke="url(#lineGold)" stroke-width="1.15">
               <line x1="410" y1="44" x2="410" y2="948"/>
               <line x1="76" y1="484" x2="744" y2="484"/>
@@ -553,55 +583,43 @@
               <path d="M652 484H744"/>
             </g>
 
-            <!-- monument -->
             <g class="phase-shell" opacity="0.98" stroke="url(#lineGold)" fill="none" stroke-width="3">
-              <!-- base feet -->
               <path d="M334 874L314 918H350L364 874"/>
               <path d="M456 874L470 918H506L486 874"/>
-              <!-- lower platform -->
               <path d="M316 874V820H504V874"/>
               <path d="M294 820V762H526V820"/>
               <path d="M308 762V714H512V762"/>
-              <!-- cylindrical lower drum -->
               <path d="M330 714V652H490V714"/>
               <path d="M330 652C330 638 346 628 370 628H450C474 628 490 638 490 652"/>
               <path d="M336 628C350 606 378 594 410 594C442 594 470 606 484 628"/>
-              <!-- middle body -->
               <path d="M300 594V540H520V594"/>
               <path d="M286 540V492H534V540"/>
               <path d="M264 492L312 446H508L556 492"/>
-              <!-- eye chamber -->
               <path d="M290 446V388H530V446"/>
               <path d="M314 388V334H506V388"/>
-              <!-- side architecture -->
               <path d="M250 420V306H316"/>
               <path d="M570 420V306H504"/>
               <path d="M250 306V260H316V306"/>
               <path d="M570 306V260H504V306"/>
               <path d="M268 260V226H300V260"/>
               <path d="M552 260V226H520V260"/>
-              <!-- upper tower -->
               <path d="M334 334V278H486V334"/>
               <path d="M350 278V230H470V278"/>
               <path d="M364 230V190H456V230"/>
               <path d="M376 190V154H444V190"/>
               <path d="M388 154V122H432V154"/>
               <path d="M410 92V122"/>
-              <!-- crown -->
               <path class="phase-crown" d="M394 92C394 76 401 66 410 58C419 66 426 76 426 92"/>
-              <!-- braces -->
               <path d="M250 420L224 390"/>
               <path d="M570 420L596 390"/>
               <path d="M298 762L244 804"/>
               <path d="M522 762L576 804"/>
             </g>
 
-            <!-- internal volume -->
             <g class="phase-ghost" opacity="0.22" fill="url(#ghostFill)" stroke="none">
               <path d="M302 388H518V874H302Z"/>
             </g>
 
-            <!-- crescent eye housing -->
             <g class="phase-eye" stroke="url(#lineGold)" stroke-width="4" fill="none">
               <circle cx="410" cy="414" r="98"/>
               <path d="M445 320C392 330 360 364 356 414C360 466 392 500 445 510"/>
@@ -609,7 +627,6 @@
               <circle cx="410" cy="414" r="18"/>
             </g>
 
-            <!-- lateral glyph system -->
             <g class="phase-lines phase-orbit" opacity="0.76" stroke="url(#lineGold)" stroke-width="2">
               <path d="M184 484L232 456L270 484L232 512L184 484Z"/>
               <path d="M636 484L682 448L728 484L682 520L636 484Z"/>
@@ -625,7 +642,6 @@
               <line x1="508" y1="484" x2="636" y2="484"/>
             </g>
 
-            <!-- micro architecture traces -->
             <g class="phase-lines" opacity="0.58" stroke="url(#lineGold)" stroke-width="1.35">
               <line x1="288" y1="240" x2="236" y2="194"/>
               <line x1="532" y1="240" x2="584" y2="194"/>
@@ -646,6 +662,7 @@
       </div>
 
       <aside class="panel active" id="infoPanel" aria-live="polite">
+        <button class="panel-close" id="panelClose" aria-label="Close panel">✕</button>
         <small id="panelKicker">Node Layer</small>
         <h2 id="panelTitle">IGZOLT Core</h2>
         <p id="panelBody">
@@ -663,7 +680,7 @@
         <span>Audio Hooks Armed</span>
       </div>
 
-      <div class="hint">Node active · portal materialization v3</div>
+      <div class="hint">Node active · portal materialization v4</div>
     </main>
   </div>
 
@@ -677,6 +694,7 @@
     const panelKicker = document.getElementById('panelKicker');
     const panelTitle = document.getElementById('panelTitle');
     const panelBody = document.getElementById('panelBody');
+    const panelClose = document.getElementById('panelClose');
 
     const panelMap = {
       infrastructure: {
@@ -701,17 +719,20 @@
       }
     };
 
+    function openPanel(data){
+      panelKicker.textContent = data.kicker;
+      panelTitle.textContent = data.title;
+      panelBody.textContent = data.body;
+      panel.classList.add('active');
+    }
+
     document.querySelectorAll('.chip').forEach(chip => {
-      const apply = () => {
-        const data = panelMap[chip.dataset.panel];
-        if (!data) return;
-        panelKicker.textContent = data.kicker;
-        panelTitle.textContent = data.title;
-        panelBody.textContent = data.body;
-        panel.classList.add('active');
-      };
-      chip.addEventListener('mouseenter', apply);
-      chip.addEventListener('click', apply);
+      chip.addEventListener('mouseenter', () => openPanel(panelMap[chip.dataset.panel]));
+      chip.addEventListener('click', () => openPanel(panelMap[chip.dataset.panel]));
+    });
+
+    panelClose.addEventListener('click', () => {
+      panel.classList.remove('active');
     });
 
     window.IGZOLT_AUDIO = {
