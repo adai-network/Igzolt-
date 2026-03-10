@@ -4,20 +4,24 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>IGZOLT Node Interface</title>
-  <meta name="description" content="IGZOLT immersive node interface for EdgeLayer Systems and ADAI Network." />
+  <meta name="description" content="IGZOLT node interface for EdgeLayer Systems and ADAI Network." />
   <style>
     :root{
-      --bg:#06111a;
-      --bg2:#0a2033;
-      --ink:#efe5cf;
-      --muted:#aab7c5;
-      --line:rgba(239,229,207,.16);
-      --line-strong:rgba(239,229,207,.40);
+      --bg:#06111b;
+      --bg-deep:#030b14;
+      --bg-blue:#0a2d52;
+      --ink:#efe4cc;
+      --muted:#9fb2c2;
+      --line:rgba(239,228,204,.16);
+      --line-strong:rgba(239,228,204,.42);
+      --line-soft:rgba(239,228,204,.08);
       --gold:#e0c88f;
-      --accent:#d9483b;
-      --panel:rgba(6,17,26,.86);
-      --panel2:rgba(10,32,51,.92);
+      --gold-soft:rgba(224,200,143,.24);
+      --blue-glow:rgba(70,132,255,.16);
+      --red-glow:rgba(217,72,59,.08);
+      --panel:rgba(6,17,27,.74);
       --grid:64px;
+      --max:1700px;
       --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       --ease:cubic-bezier(.22,.8,.22,1);
     }
@@ -29,111 +33,143 @@
       background:var(--bg);
       color:var(--ink);
       font-family:var(--font);
-      overflow-x:hidden;
-      overflow-y:auto;
+      overflow:hidden;
     }
 
     body{
       background:
-        radial-gradient(1100px 820px at 50% 42%, rgba(92,148,255,.12), transparent 42%),
-        radial-gradient(900px 700px at 50% 55%, rgba(224,200,143,.06), transparent 44%),
-        linear-gradient(180deg, #03101a 0%, #08203a 45%, #07131d 100%);
+        radial-gradient(1100px 720px at 50% 42%, rgba(72,132,255,.18), transparent 36%),
+        radial-gradient(760px 480px at 50% 55%, rgba(239,228,204,.06), transparent 46%),
+        radial-gradient(500px 280px at 50% 70%, rgba(217,72,59,.06), transparent 38%),
+        linear-gradient(180deg, #03101a 0%, #08203a 45%, #06111b 100%);
     }
 
     body::before{
       content:"";
-      position:fixed; inset:0;
-      background-image:
-        linear-gradient(rgba(255,255,255,.042) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.042) 1px, transparent 1px);
-      background-size:var(--grid) var(--grid), var(--grid) var(--grid);
-      opacity:.62;
+      position:fixed;
+      inset:0;
       pointer-events:none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+      background-size:var(--grid) var(--grid), var(--grid) var(--grid);
+      opacity:.55;
     }
 
     body::after{
       content:"";
-      position:fixed; inset:0;
-      background:
-        radial-gradient(circle at 50% 50%, transparent 0 28%, rgba(255,255,255,.024) 45%, transparent 62%),
-        radial-gradient(circle at 50% 50%, rgba(95,152,255,.08), transparent 52%);
-      mix-blend-mode:screen;
-      opacity:.9;
+      position:fixed;
+      inset:0;
       pointer-events:none;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(255,255,255,.03), transparent 26%),
+        radial-gradient(circle at 50% 48%, rgba(70,132,255,.10), transparent 40%);
+      mix-blend-mode:screen;
     }
 
     a{color:inherit;text-decoration:none}
     button{font:inherit}
 
     .boot{
-      position:fixed; inset:0; z-index:100;
-      display:grid; place-items:center;
+      position:fixed;
+      inset:0;
+      z-index:200;
+      display:grid;
+      place-items:center;
       background:
-        radial-gradient(circle at 50% 50%, rgba(88,150,255,.12), transparent 34%),
-        linear-gradient(180deg, rgba(2,8,12,.97), rgba(3,10,16,.985));
+        radial-gradient(circle at 50% 50%, rgba(70,132,255,.12), transparent 34%),
+        linear-gradient(180deg, rgba(2,8,12,.96), rgba(3,10,18,.98));
       transition:opacity 1s var(--ease), visibility 1s var(--ease);
     }
-    .boot.hidden{opacity:0;visibility:hidden;pointer-events:none}
 
-    .boot-core{display:grid;gap:18px;justify-items:center;text-align:center}
+    .boot.hidden{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .boot-core{
+      display:grid;
+      gap:18px;
+      justify-items:center;
+      text-align:center;
+    }
+
     .boot-ring{
-      width:140px;height:140px;border-radius:50%;
-      border:1px solid rgba(239,229,207,.14);
+      width:134px;
+      height:134px;
+      border-radius:50%;
+      border:1px solid rgba(239,228,204,.16);
       position:relative;
-      box-shadow:0 0 0 1px rgba(255,255,255,.03) inset, 0 0 60px rgba(88,150,255,.16);
+      box-shadow:0 0 60px rgba(70,132,255,.18);
       animation:bootPulse 2.8s linear infinite;
     }
+
     .boot-ring::before,
     .boot-ring::after{
-      content:"";position:absolute;border-radius:50%;
-      border:1px solid rgba(239,229,207,.18);
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      inset:14px;
+      border:1px solid rgba(239,228,204,.16);
     }
-    .boot-ring::before{inset:14px}
+
     .boot-ring::after{
-      inset:36px;
-      border-color:rgba(217,72,59,.36);
-      box-shadow:0 0 22px rgba(217,72,59,.18);
+      inset:34px;
+      border-color:rgba(224,200,143,.4);
     }
-    .boot-copy small{
+
+    .boot-copy small,
+    .boot-copy span{
       display:block;
-      font-size:11px;
-      letter-spacing:.34em;
       text-transform:uppercase;
       color:var(--muted);
+    }
+
+    .boot-copy small{
+      font-size:11px;
+      letter-spacing:.34em;
       margin-bottom:10px;
     }
+
     .boot-copy strong{
       display:block;
       font-size:18px;
-      letter-spacing:.24em;
-      text-transform:uppercase;
       font-weight:700;
+      letter-spacing:.22em;
+      text-transform:uppercase;
     }
+
     .boot-copy span{
-      display:block;
-      margin-top:8px;
-      color:var(--muted);
       font-size:12px;
       letter-spacing:.18em;
-      text-transform:uppercase;
+      margin-top:8px;
     }
+
     .boot-bar{
-      width:270px;height:8px;border-radius:999px;
-      border:1px solid rgba(239,229,207,.16);
-      overflow:hidden;background:rgba(255,255,255,.02);
+      width:260px;
+      height:8px;
+      border-radius:999px;
+      border:1px solid rgba(239,228,204,.18);
+      overflow:hidden;
+      background:rgba(255,255,255,.02);
     }
+
     .boot-bar::before{
-      content:"";display:block;height:100%;width:0%;
-      background:linear-gradient(90deg, rgba(217,72,59,.8), rgba(239,229,207,.85));
-      animation:bootLoad 2.8s var(--ease) forwards;
+      content:"";
+      display:block;
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, rgba(217,72,59,.75), rgba(239,228,204,.82));
+      animation:bootLoad 2.9s var(--ease) forwards;
     }
 
     .shell{
       position:relative;
-      width:min(100%, 1680px);
-      min-height:100vh;
+      width:min(100%, var(--max));
       margin:0 auto;
-      padding:18px 18px 32px;
+      min-height:100vh;
+      padding:18px 18px 24px;
     }
 
     .topbar{
@@ -142,20 +178,33 @@
       display:flex;
       justify-content:space-between;
       align-items:flex-start;
-      gap:24px;
+      gap:20px;
       padding-top:8px;
     }
 
-    .identity{display:flex;gap:14px;align-items:flex-start}
+    .identity{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+    }
+
     .mark{
-      width:42px;height:42px;border-radius:50%;
+      width:42px;
+      height:42px;
+      border-radius:50%;
       border:1px solid var(--line-strong);
-      display:grid;place-items:center;
-      background:radial-gradient(circle at 50% 40%, rgba(224,200,143,.14), rgba(7,19,29,.9));
+      display:grid;
+      place-items:center;
+      background:radial-gradient(circle at 50% 42%, rgba(224,200,143,.14), rgba(6,17,27,.9));
       box-shadow:0 0 0 1px rgba(255,255,255,.03) inset;
       flex:0 0 auto;
     }
-    .mark::before{content:"◐";font-size:21px;line-height:1}
+
+    .mark::before{
+      content:"◐";
+      font-size:21px;
+      line-height:1;
+    }
 
     .identity-copy b{
       display:block;
@@ -163,13 +212,14 @@
       letter-spacing:.28em;
       text-transform:uppercase;
     }
+
     .identity-copy span{
       display:block;
-      margin-top:5px;
       font-size:10px;
+      color:var(--muted);
       letter-spacing:.28em;
       text-transform:uppercase;
-      color:var(--muted);
+      margin-top:5px;
     }
 
     .status{
@@ -177,45 +227,55 @@
       font-size:10px;
       letter-spacing:.28em;
       text-transform:uppercase;
-      line-height:1.9;
       color:var(--ink);
+      line-height:1.9;
       padding-top:8px;
     }
-    .status span{display:block;color:var(--muted)}
+
+    .status span{
+      display:block;
+      color:var(--muted);
+    }
 
     .realm{
       position:relative;
-      min-height:calc(100vh - 80px);
+      min-height:calc(100vh - 86px);
       display:grid;
       place-items:center;
-      padding:28px 0 260px;
+      isolation:isolate;
     }
 
     .atmosphere{
-      position:absolute; inset:0;
+      position:absolute;
+      inset:0;
       pointer-events:none;
       background:
-        radial-gradient(circle at 50% 50%, rgba(92,148,255,.18), transparent 22%),
-        radial-gradient(circle at 50% 50%, rgba(239,229,207,.09), transparent 36%),
-        radial-gradient(circle at 50% 50%, rgba(217,72,59,.05), transparent 12%);
+        radial-gradient(circle at 50% 48%, rgba(75,136,255,.18), transparent 22%),
+        radial-gradient(circle at 50% 50%, rgba(239,228,204,.08), transparent 36%),
+        radial-gradient(circle at 50% 58%, rgba(217,72,59,.06), transparent 14%);
       filter:blur(18px);
-      animation:breath 9s ease-in-out infinite;
+      animation:atmoBreath 8s ease-in-out infinite;
+      opacity:.95;
     }
 
-    .scanline{
-      position:absolute; left:0; right:0; top:50%;
-      height:2px; transform:translateY(-50%);
-      background:linear-gradient(90deg, transparent, rgba(239,229,207,.85), transparent);
-      box-shadow:0 0 22px rgba(239,229,207,.22);
+    .scan{
+      position:absolute;
+      left:2%;
+      right:2%;
+      top:53%;
+      height:2px;
+      transform:translateY(-50%);
+      background:linear-gradient(90deg, transparent, rgba(239,228,204,.75), transparent);
+      box-shadow:0 0 20px rgba(239,228,204,.20);
       opacity:.36;
       pointer-events:none;
-      animation:scan 8s ease-in-out infinite;
+      animation:scanSweep 8s ease-in-out infinite;
     }
 
     .node-wrap{
       position:relative;
-      width:min(100%, 1120px);
-      aspect-ratio:1/1;
+      width:min(100%, 1080px);
+      height:min(100%, 860px);
       display:grid;
       place-items:center;
       z-index:2;
@@ -223,57 +283,80 @@
 
     .orbital{
       position:absolute;
-      width:610px;
-      height:610px;
+      width:560px;
+      height:560px;
       border-radius:50%;
-      border:1px solid rgba(239,229,207,.15);
-      box-shadow:0 0 80px rgba(88,150,255,.10);
-      animation:spin 42s linear infinite;
-    }
-    .orbital::before,
-    .orbital::after{
-      content:"";position:absolute;border-radius:50%;
-      border:1px solid rgba(239,229,207,.16);
-    }
-    .orbital::before{inset:38px}
-    .orbital::after{
-      inset:112px;
-      border-color:rgba(217,72,59,.28);
-      box-shadow:0 0 24px rgba(217,72,59,.10);
+      border:1px solid rgba(239,228,204,.16);
+      box-shadow:0 0 60px rgba(70,132,255,.08);
+      animation:slowSpin 40s linear infinite;
     }
 
-    .cross-x,.cross-y{
+    .orbital::before,
+    .orbital::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      border:1px solid rgba(239,228,204,.14);
+    }
+
+    .orbital::before{
+      inset:40px;
+      animation:slowSpinReverse 28s linear infinite;
+    }
+
+    .orbital::after{
+      inset:110px;
+      border-color:rgba(224,200,143,.26);
+      box-shadow:0 0 18px rgba(224,200,143,.08);
+    }
+
+    .crosshair-x,
+    .crosshair-y{
       position:absolute;
       pointer-events:none;
     }
-    .cross-x{
-      width:94%; height:1px; left:3%; top:50%;
-      background:linear-gradient(90deg, transparent, rgba(239,229,207,.32), transparent);
+
+    .crosshair-x{
+      width:96%;
+      height:1px;
+      left:2%;
+      top:53%;
+      background:linear-gradient(90deg, transparent, rgba(239,228,204,.28), transparent);
     }
-    .cross-y{
-      width:1px; height:90%; top:5%; left:50%;
-      background:linear-gradient(180deg, transparent, rgba(239,229,207,.32), transparent);
+
+    .crosshair-y{
+      width:1px;
+      height:94%;
+      left:50%;
+      top:3%;
+      background:linear-gradient(180deg, transparent, rgba(239,228,204,.28), transparent);
     }
 
     .structure{
       position:relative;
-      width:min(100%, 760px);
-      aspect-ratio:1/1.16;
-      filter:drop-shadow(0 30px 90px rgba(0,0,0,.44));
+      width:min(100%, 880px);
+      aspect-ratio:1 / 1.16;
+      transform:translateZ(0);
+      filter:drop-shadow(0 40px 80px rgba(0,0,0,.46));
       transition:transform .45s var(--ease), filter .45s var(--ease);
     }
+
     .structure:hover{
       transform:scale(1.01);
-      filter:drop-shadow(0 40px 110px rgba(0,0,0,.54));
+      filter:drop-shadow(0 44px 96px rgba(0,0,0,.52));
     }
-    .structure svg{width:100%;height:100%;display:block}
 
-    .phase-shell{animation:materialize 1.8s var(--ease) both}
-    .phase-lines{animation:lineLift 2.1s var(--ease) both}
-    .phase-ghost{animation:ghost 4s ease-in-out infinite}
-    .phase-eye{animation:eyeGlow 6s ease-in-out infinite}
-    .phase-crown{animation:crown 5.6s ease-in-out infinite}
-    .phase-orbit{animation:microPulse 7s ease-in-out infinite}
+    .structure svg{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+
+    .node-shell{animation:materialize 1.8s var(--ease) both}
+    .node-fine{animation:lineRise 2.4s var(--ease) both}
+    .node-ghost{animation:ghostFade 3.2s ease-in-out infinite}
+    .node-eye{animation:eyeGlow 6s ease-in-out infinite}
+    .moon-crown{animation:crownPulse 5.2s ease-in-out infinite}
 
     .labels{
       position:absolute;
@@ -283,69 +366,73 @@
 
     .chip{
       position:absolute;
-      min-width:142px;
+      min-width:138px;
       padding:11px 14px;
       border-radius:999px;
       border:1px solid var(--line-strong);
-      background:rgba(6,17,26,.62);
+      background:rgba(6,17,27,.68);
       color:var(--ink);
       font-size:12px;
       font-weight:700;
       letter-spacing:.08em;
       box-shadow:0 0 0 1px rgba(255,255,255,.03) inset, 0 18px 40px rgba(0,0,0,.22);
       backdrop-filter:blur(12px);
-      transition:transform .24s var(--ease), border-color .24s ease, background .24s ease;
+      transition:transform .25s var(--ease), border-color .25s ease, background .25s ease;
       pointer-events:auto;
       cursor:pointer;
-      z-index:6;
     }
+
     .chip:hover{
       transform:translateY(-2px) scale(1.02);
-      border-color:rgba(239,229,207,.68);
-      background:rgba(10,26,40,.82);
+      border-color:rgba(239,228,204,.64);
+      background:rgba(10,25,40,.84);
     }
 
-    .chip.infrastructure{top:25%;left:10%}
-    .chip.authority{top:11%;right:12%}
-    .chip.intake{bottom:19%;left:18%}
-    .chip.ai{bottom:23%;right:14%}
+    .chip.infrastructure{top:26%;left:10%}
+    .chip.authority{top:14%;right:10%}
+    .chip.intake{bottom:14%;left:18%}
+    .chip.ai{bottom:18%;right:16%}
 
     .panel{
-      position:fixed;
-      left:50%;
-      bottom:20px;
-      transform:translateX(-50%) translateY(18px);
-      width:min(880px, calc(100vw - 28px));
+      position:absolute;
+      right:24px;
+      bottom:24px;
+      width:min(420px, 34vw);
       border:1px solid var(--line);
       border-radius:24px;
-      background:linear-gradient(180deg, rgba(6,17,26,.92), rgba(8,24,38,.90));
+      background:linear-gradient(180deg, rgba(6,17,27,.84), rgba(4,12,22,.76));
       backdrop-filter:blur(18px);
       padding:18px 18px 16px;
-      box-shadow:0 28px 72px rgba(0,0,0,.35);
-      z-index:30;
+      box-shadow:0 28px 70px rgba(0,0,0,.34);
+      z-index:10;
       opacity:0;
+      transform:translateY(18px);
       transition:opacity .35s ease, transform .35s var(--ease);
       pointer-events:none;
     }
+
     .panel.active{
       opacity:1;
-      transform:translateX(-50%) translateY(0);
+      transform:translateY(0);
       pointer-events:auto;
     }
+
     .panel small{
       display:block;
-      margin-bottom:10px;
       font-size:10px;
       letter-spacing:.28em;
       text-transform:uppercase;
       color:var(--muted);
+      margin-bottom:10px;
     }
+
     .panel h2{
       margin:0 0 10px;
       font-size:24px;
       line-height:1.05;
       text-transform:uppercase;
     }
+
     .panel p{
       margin:0;
       color:var(--muted);
@@ -359,8 +446,8 @@
       flex-wrap:wrap;
       margin-top:18px;
     }
-    .panel-actions a,
-    .panel-actions button{
+
+    .panel-actions a{
       padding:12px 14px;
       border-radius:14px;
       border:1px solid var(--line-strong);
@@ -370,152 +457,144 @@
       font-weight:700;
       letter-spacing:.16em;
       text-transform:uppercase;
-      cursor:pointer;
-    }
-    .panel-actions .primary{
-      border-color:rgba(217,72,59,.48);
-      background:linear-gradient(135deg, rgba(217,72,59,.18), rgba(224,200,143,.08));
     }
 
-    .panel-close{
+    .panel-actions a.primary{
+      border-color:rgba(224,200,143,.46);
+      background:linear-gradient(135deg, rgba(224,200,143,.16), rgba(255,255,255,.04));
+    }
+
+    .sound-hook{
       position:absolute;
-      top:12px;
-      right:12px;
-      width:38px;
-      height:38px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      color:var(--ink);
-      cursor:pointer;
-    }
-
-    .sound{
-      position:fixed;
-      left:18px;
-      bottom:18px;
+      left:24px;
+      bottom:24px;
       display:flex;
       gap:10px;
       align-items:center;
       border:1px solid var(--line);
       border-radius:999px;
       padding:10px 14px;
-      background:rgba(6,17,26,.54);
+      background:rgba(6,17,27,.56);
       color:var(--muted);
       font-size:11px;
       letter-spacing:.18em;
       text-transform:uppercase;
       backdrop-filter:blur(14px);
-      z-index:31;
-    }
-    .sound-dot{
-      width:10px;height:10px;border-radius:50%;
-      background:rgba(217,72,59,.74);
-      box-shadow:0 0 14px rgba(217,72,59,.38);
-      animation:blink 2.4s ease-in-out infinite;
+      z-index:10;
     }
 
-    .hint{
-      position:fixed;
-      right:18px;
-      bottom:18px;
+    .sound-dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:rgba(217,72,59,.72);
+      box-shadow:0 0 14px rgba(217,72,59,.38);
+      animation:soundBlink 2.2s ease-in-out infinite;
+    }
+
+    .portal-hint{
+      position:absolute;
+      left:50%;
+      bottom:10px;
+      transform:translateX(-50%);
       color:var(--muted);
       font-size:10px;
       letter-spacing:.28em;
       text-transform:uppercase;
-      opacity:.72;
-      z-index:31;
+      opacity:.7;
+      white-space:nowrap;
     }
 
     @keyframes bootPulse{
-      0%{transform:scale(.985);opacity:.86}
+      0%,100%{transform:scale(.98);opacity:.86}
       50%{transform:scale(1.02);opacity:1}
-      100%{transform:scale(.985);opacity:.86}
     }
+
     @keyframes bootLoad{
       from{width:0%}
       to{width:100%}
     }
-    @keyframes breath{
+
+    @keyframes atmoBreath{
       0%,100%{transform:scale(1);opacity:.78}
       50%{transform:scale(1.06);opacity:1}
     }
-    @keyframes scan{
-      0%,100%{transform:translateY(-50%) scaleX(.84);opacity:.18}
-      50%{transform:translateY(-50%) scaleX(1);opacity:.48}
+
+    @keyframes scanSweep{
+      0%,100%{transform:translateY(-50%) scaleX(.82);opacity:.14}
+      50%{transform:translateY(-50%) scaleX(1);opacity:.42}
     }
-    @keyframes spin{
+
+    @keyframes slowSpin{
       from{transform:rotate(0deg)}
       to{transform:rotate(360deg)}
     }
+
+    @keyframes slowSpinReverse{
+      from{transform:rotate(360deg)}
+      to{transform:rotate(0deg)}
+    }
+
     @keyframes materialize{
-      0%{opacity:0;transform:translateY(30px) scale(.96)}
+      0%{opacity:0;transform:translateY(24px) scale(.96)}
       100%{opacity:1;transform:translateY(0) scale(1)}
     }
-    @keyframes lineLift{
-      0%{opacity:0;transform:translateY(18px)}
+
+    @keyframes lineRise{
+      0%{opacity:0;transform:translateY(16px)}
       100%{opacity:1;transform:translateY(0)}
     }
-    @keyframes ghost{
-      0%,100%{opacity:.12}
-      50%{opacity:.30}
+
+    @keyframes ghostFade{
+      0%,100%{opacity:.08}
+      50%{opacity:.22}
     }
+
     @keyframes eyeGlow{
-      0%,100%{filter:drop-shadow(0 0 0 rgba(239,229,207,0))}
-      50%{filter:drop-shadow(0 0 18px rgba(239,229,207,.24))}
+      0%,100%{filter:drop-shadow(0 0 0 rgba(239,228,204,0))}
+      50%{filter:drop-shadow(0 0 16px rgba(239,228,204,.18))}
     }
-    @keyframes crown{
-      0%,100%{opacity:.82}
+
+    @keyframes crownPulse{
+      0%,100%{opacity:.8}
       50%{opacity:1}
     }
-    @keyframes microPulse{
-      0%,100%{transform:scale(1)}
-      50%{transform:scale(1.01)}
-    }
-    @keyframes blink{
-      0%,100%{opacity:.62;transform:scale(.95)}
+
+    @keyframes soundBlink{
+      0%,100%{opacity:.6;transform:scale(.95)}
       50%{opacity:1;transform:scale(1.08)}
     }
 
     @media (max-width:1100px){
       .node-wrap{width:min(100%, 980px)}
-      .orbital{width:520px;height:520px}
-      .chip.infrastructure{left:4%}
-      .chip.authority{right:4%}
+      .orbital{width:500px;height:500px}
+      .chip.infrastructure{left:5%}
+      .chip.authority{right:5%}
     }
 
     @media (max-width:820px){
       .shell{padding:14px}
       .topbar{flex-direction:column;align-items:flex-start}
       .status{text-align:left;padding-top:0}
-      .realm{min-height:calc(100vh - 70px);padding-bottom:300px}
-      .orbital{width:390px;height:390px}
-      .chip{
-        min-width:unset;
-        font-size:11px;
-        padding:10px 12px;
-      }
+      .realm{min-height:calc(100vh - 70px)}
+      .node-wrap{width:100%;height:100%}
+      .orbital{width:380px;height:380px}
+      .chip{font-size:11px;padding:10px 12px;min-width:unset}
       .chip.infrastructure{top:18%;left:0}
       .chip.authority{top:13%;right:0}
-      .chip.intake{bottom:16%;left:5%}
-      .chip.ai{bottom:18%;right:5%}
-      .panel{
-        width:calc(100vw - 20px);
-        bottom:10px;
-      }
-      .sound{left:10px;bottom:10px}
-      .hint{display:none}
+      .chip.intake{bottom:13%;left:6%}
+      .chip.ai{bottom:15%;right:6%}
+      .panel{width:auto;left:14px;right:14px;bottom:78px}
+      .sound-hook{left:14px;bottom:18px}
+      .portal-hint{bottom:4px}
     }
 
     @media (max-width:560px){
       .orbital{width:300px;height:300px}
       .structure{width:100%}
-      .chip{font-size:10px;letter-spacing:.05em}
+      .chip{font-size:10px}
       .identity-copy b{font-size:13px}
       .identity-copy span{letter-spacing:.18em}
-      .sound{font-size:9px;padding:8px 10px}
-      .panel h2{font-size:20px}
-      .panel p{font-size:13px}
     }
   </style>
 </head>
@@ -550,105 +629,147 @@
 
     <main class="realm" aria-label="IGZOLT immersive node">
       <div class="atmosphere"></div>
-      <div class="scanline"></div>
+      <div class="scan"></div>
 
       <div class="node-wrap">
         <div class="orbital"></div>
-        <div class="cross-x"></div>
-        <div class="cross-y"></div>
+        <div class="crosshair-x"></div>
+        <div class="crosshair-y"></div>
 
         <div class="structure" aria-label="Architectural node monument">
-          <svg viewBox="0 0 820 980" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 900 1040" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <linearGradient id="lineGold" x1="410" y1="70" x2="410" y2="930" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#f2ead8" stop-opacity="0.98"/>
-                <stop offset="1" stop-color="#cabd9d" stop-opacity="0.26"/>
+              <linearGradient id="lineGold" x1="450" y1="60" x2="450" y2="980" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#F2E9D7" stop-opacity="0.98"/>
+                <stop offset="1" stop-color="#CABD9D" stop-opacity="0.26"/>
               </linearGradient>
-              <linearGradient id="ghostFill" x1="180" y1="260" x2="650" y2="850" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#f2ead8" stop-opacity="0.09"/>
-                <stop offset="1" stop-color="#f2ead8" stop-opacity="0.01"/>
+              <linearGradient id="ghostFill" x1="180" y1="260" x2="720" y2="900" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#F2E9D7" stop-opacity="0.08"/>
+                <stop offset="1" stop-color="#F2E9D7" stop-opacity="0.01"/>
               </linearGradient>
             </defs>
 
-            <g class="phase-lines" opacity="0.48" stroke="url(#lineGold)" stroke-width="1.15">
-              <line x1="410" y1="44" x2="410" y2="948"/>
-              <line x1="76" y1="484" x2="744" y2="484"/>
-              <circle cx="410" cy="484" r="286"/>
-              <circle cx="410" cy="484" r="218" opacity="0.54"/>
-              <circle cx="210" cy="360" r="18"/>
-              <circle cx="610" cy="360" r="18"/>
-              <circle cx="638" cy="484" r="12"/>
-              <circle cx="182" cy="484" r="12"/>
-              <path d="M168 484H76"/>
-              <path d="M652 484H744"/>
+            <!-- fine ghost construction -->
+            <g class="node-ghost" opacity="0.18" stroke="url(#lineGold)" stroke-width="1">
+              <line x1="450" y1="34" x2="450" y2="1010"/>
+              <line x1="88" y1="520" x2="812" y2="520"/>
+              <line x1="244" y1="196" x2="326" y2="268"/>
+              <line x1="656" y1="196" x2="574" y2="268"/>
+              <line x1="234" y1="744" x2="320" y2="680"/>
+              <line x1="666" y1="744" x2="580" y2="680"/>
+              <line x1="306" y1="140" x2="306" y2="264"/>
+              <line x1="594" y1="140" x2="594" y2="264"/>
+              <line x1="286" y1="328" x2="230" y2="328"/>
+              <line x1="614" y1="328" x2="670" y2="328"/>
+              <circle cx="450" cy="518" r="300"/>
+              <circle cx="450" cy="518" r="232"/>
             </g>
 
-            <g class="phase-shell" opacity="0.98" stroke="url(#lineGold)" fill="none" stroke-width="3">
-              <path d="M334 874L314 918H350L364 874"/>
-              <path d="M456 874L470 918H506L486 874"/>
-              <path d="M316 874V820H504V874"/>
-              <path d="M294 820V762H526V820"/>
-              <path d="M308 762V714H512V762"/>
-              <path d="M330 714V652H490V714"/>
-              <path d="M330 652C330 638 346 628 370 628H450C474 628 490 638 490 652"/>
-              <path d="M336 628C350 606 378 594 410 594C442 594 470 606 484 628"/>
-              <path d="M300 594V540H520V594"/>
-              <path d="M286 540V492H534V540"/>
-              <path d="M264 492L312 446H508L556 492"/>
-              <path d="M290 446V388H530V446"/>
-              <path d="M314 388V334H506V388"/>
-              <path d="M250 420V306H316"/>
-              <path d="M570 420V306H504"/>
-              <path d="M250 306V260H316V306"/>
-              <path d="M570 306V260H504V306"/>
-              <path d="M268 260V226H300V260"/>
-              <path d="M552 260V226H520V260"/>
-              <path d="M334 334V278H486V334"/>
-              <path d="M350 278V230H470V278"/>
-              <path d="M364 230V190H456V230"/>
-              <path d="M376 190V154H444V190"/>
-              <path d="M388 154V122H432V154"/>
-              <path d="M410 92V122"/>
-              <path class="phase-crown" d="M394 92C394 76 401 66 410 58C419 66 426 76 426 92"/>
-              <path d="M250 420L224 390"/>
-              <path d="M570 420L596 390"/>
-              <path d="M298 762L244 804"/>
-              <path d="M522 762L576 804"/>
+            <!-- tower shell -->
+            <g class="node-shell" stroke="url(#lineGold)" stroke-width="3" fill="none">
+              <!-- base -->
+              <path d="M386 936V860H514V936"/>
+              <path d="M338 936V808H562V936"/>
+              <path d="M324 808V772H576V808"/>
+              <path d="M350 772V720H550V772"/>
+              <path d="M376 720V664H524V720"/>
+
+              <!-- lower body -->
+              <path d="M344 664V614H556V664"/>
+              <path d="M314 614L356 570H544L586 614"/>
+              <path d="M344 570V530H556V570"/>
+              <path d="M370 530V480H530V530"/>
+
+              <!-- central eye housing -->
+              <path d="M330 480V428H570V480"/>
+              <path d="M360 428V382H540V428"/>
+              <path d="M386 382V330H514V382"/>
+
+              <!-- upper tower -->
+              <path d="M360 330V286H540V330"/>
+              <path d="M388 286V244H512V286"/>
+              <path d="M406 244V202H494V244"/>
+              <path d="M420 202V164H480V202"/>
+              <path d="M450 120V164"/>
             </g>
 
-            <g class="phase-ghost" opacity="0.22" fill="url(#ghostFill)" stroke="none">
-              <path d="M302 388H518V874H302Z"/>
+            <!-- side architecture -->
+            <g class="node-shell" stroke="url(#lineGold)" stroke-width="3" fill="none">
+              <!-- left side tower -->
+              <path d="M266 670V590H318V670"/>
+              <path d="M250 590V548H334V590"/>
+              <path d="M260 548V504H324V548"/>
+              <path d="M272 504V466H312V504"/>
+              <path d="M240 466L272 436H312L344 466"/>
+              <path d="M254 436V392H330V436"/>
+              <path d="M268 392V354H316V392"/>
+
+              <!-- right side deck -->
+              <path d="M582 474V432H668V474"/>
+              <path d="M604 432V390H728V432"/>
+              <path d="M620 390V354H706V390"/>
+              <path d="M594 520H720"/>
+              <path d="M712 520L696 510M712 520L696 530"/>
             </g>
 
-            <g class="phase-eye" stroke="url(#lineGold)" stroke-width="4" fill="none">
-              <circle cx="410" cy="414" r="98"/>
-              <path d="M445 320C392 330 360 364 356 414C360 466 392 500 445 510"/>
-              <path d="M504 414C480 388 446 372 410 372C374 372 340 388 316 414C340 440 374 456 410 456C446 456 480 440 504 414Z"/>
-              <circle cx="410" cy="414" r="18"/>
+            <!-- moon and eye assembly -->
+            <g class="node-eye" stroke="url(#lineGold)" fill="none">
+              <path d="M402 304C374 334 358 374 358 418C358 462 376 500 404 530" stroke-width="14" stroke-linecap="round"/>
+              <path d="M474 318C500 334 516 356 524 384" stroke-width="8" stroke-linecap="round"/>
+              <path d="M486 330C462 330 438 338 420 354C402 370 392 392 390 418C392 444 402 466 420 482C438 498 462 506 486 506" stroke-width="3"/>
+              <path d="M528 418C504 392 478 378 450 378C422 378 396 392 372 418C396 444 422 458 450 458C478 458 504 444 528 418Z" stroke-width="4"/>
+              <circle cx="450" cy="418" r="20" stroke-width="4"/>
             </g>
 
-            <g class="phase-lines phase-orbit" opacity="0.76" stroke="url(#lineGold)" stroke-width="2">
-              <path d="M184 484L232 456L270 484L232 512L184 484Z"/>
-              <path d="M636 484L682 448L728 484L682 520L636 484Z"/>
-              <circle cx="126" cy="484" r="18"/>
-              <circle cx="86" cy="484" r="18"/>
-              <circle cx="734" cy="484" r="18"/>
-              <line x1="734" y1="484" x2="778" y2="484"/>
-              <path d="M778 484L762 472M778 484L762 496"/>
-              <circle cx="642" cy="484" r="8"/>
-              <circle cx="620" cy="484" r="8"/>
-              <circle cx="600" cy="484" r="8"/>
-              <line x1="270" y1="484" x2="312" y2="484"/>
-              <line x1="508" y1="484" x2="636" y2="484"/>
+            <!-- crown -->
+            <g class="moon-crown" stroke="url(#lineGold)" stroke-width="3" fill="none">
+              <path d="M432 120C432 96 440 80 450 68C460 80 468 96 468 120"/>
+              <path d="M430 66C440 54 446 44 450 40C454 44 460 54 470 66"/>
+              <path d="M450 40V20"/>
+              <path d="M450 20C438 20 430 26 426 38C432 44 440 48 450 48C460 48 468 44 474 38C470 26 462 20 450 20Z"/>
             </g>
 
-            <g class="phase-lines" opacity="0.58" stroke="url(#lineGold)" stroke-width="1.35">
-              <line x1="288" y1="240" x2="236" y2="194"/>
-              <line x1="532" y1="240" x2="584" y2="194"/>
-              <line x1="300" y1="806" x2="238" y2="854"/>
-              <line x1="520" y1="806" x2="582" y2="854"/>
-              <line x1="530" y1="350" x2="580" y2="320"/>
-              <line x1="290" y1="350" x2="240" y2="320"/>
+            <!-- lateral symbolic geometry -->
+            <g class="node-fine" stroke="url(#lineGold)" stroke-width="2" fill="none">
+              <!-- left -->
+              <circle cx="122" cy="520" r="18"/>
+              <circle cx="88" cy="520" r="18"/>
+              <path d="M140 520H214"/>
+              <path d="M214 520L248 494L282 520L248 546L214 520Z"/>
+              <path d="M244 410L284 452L244 494"/>
+              <path d="M200 450H164"/>
+              <circle cx="162" cy="450" r="8"/>
+              <path d="M164 450L132 418L100 450L132 482L164 450Z"/>
+              <path d="M132 482V512"/>
+              <circle cx="132" cy="516" r="4"/>
+
+              <!-- right -->
+              <circle cx="778" cy="520" r="18"/>
+              <circle cx="812" cy="520" r="18"/>
+              <path d="M760 520H686"/>
+              <path d="M686 520L652 494L618 520L652 546L686 520Z"/>
+              <path d="M656 450H700"/>
+              <circle cx="700" cy="450" r="8"/>
+              <path d="M700 450L734 418L768 450L734 482L700 450Z"/>
+              <path d="M734 482V512"/>
+              <circle cx="734" cy="516" r="4"/>
+              <circle cx="766" cy="520" r="8"/>
+              <circle cx="746" cy="520" r="8"/>
+            </g>
+
+            <!-- support legs -->
+            <g class="node-shell" stroke="url(#lineGold)" stroke-width="3" fill="none">
+              <path d="M394 936L374 974"/>
+              <path d="M418 936L400 974"/>
+              <path d="M506 936L526 974"/>
+              <path d="M482 936L500 974"/>
+              <path d="M316 670L274 708"/>
+              <path d="M584 670L626 708"/>
+            </g>
+
+            <!-- subtle fill mass -->
+            <g class="node-ghost" opacity="0.20" fill="url(#ghostFill)" stroke="none">
+              <path d="M352 332H548V936H352Z"/>
             </g>
           </svg>
         </div>
@@ -662,12 +783,10 @@
       </div>
 
       <aside class="panel active" id="infoPanel" aria-live="polite">
-        <button class="panel-close" id="panelClose" aria-label="Close panel">✕</button>
         <small id="panelKicker">Node Layer</small>
         <h2 id="panelTitle">IGZOLT Core</h2>
         <p id="panelBody">
-          Monument interface node for authority, infrastructure, intake routing, and intelligent system access.
-          This environment is the first live realm-entry layer before deeper spatial interaction.
+          Monument interface node for authority, infrastructure, intake routing, and intelligent system access. This environment is the first realm-entry layer before deeper spatial interaction.
         </p>
         <div class="panel-actions">
           <a class="primary" href="https://edgelayersystems.com" target="_blank" rel="noopener noreferrer">EdgeLayer</a>
@@ -675,12 +794,12 @@
         </div>
       </aside>
 
-      <div class="sound">
+      <div class="sound-hook">
         <span class="sound-dot"></span>
         <span>Audio Hooks Armed</span>
       </div>
 
-      <div class="hint">Node active · portal materialization v4</div>
+      <div class="portal-hint">Node active · portal materialization v5</div>
     </main>
   </div>
 
@@ -694,7 +813,6 @@
     const panelKicker = document.getElementById('panelKicker');
     const panelTitle = document.getElementById('panelTitle');
     const panelBody = document.getElementById('panelBody');
-    const panelClose = document.getElementById('panelClose');
 
     const panelMap = {
       infrastructure: {
@@ -719,20 +837,24 @@
       }
     };
 
-    function openPanel(data){
-      panelKicker.textContent = data.kicker;
-      panelTitle.textContent = data.title;
-      panelBody.textContent = data.body;
-      panel.classList.add('active');
-    }
-
     document.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('mouseenter', () => openPanel(panelMap[chip.dataset.panel]));
-      chip.addEventListener('click', () => openPanel(panelMap[chip.dataset.panel]));
-    });
+      chip.addEventListener('mouseenter', () => {
+        const data = panelMap[chip.dataset.panel];
+        if (!data) return;
+        panelKicker.textContent = data.kicker;
+        panelTitle.textContent = data.title;
+        panelBody.textContent = data.body;
+        panel.classList.add('active');
+      });
 
-    panelClose.addEventListener('click', () => {
-      panel.classList.remove('active');
+      chip.addEventListener('click', () => {
+        const data = panelMap[chip.dataset.panel];
+        if (!data) return;
+        panelKicker.textContent = data.kicker;
+        panelTitle.textContent = data.title;
+        panelBody.textContent = data.body;
+        panel.classList.add('active');
+      });
     });
 
     window.IGZOLT_AUDIO = {
